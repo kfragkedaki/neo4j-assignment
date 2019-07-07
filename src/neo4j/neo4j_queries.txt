@@ -1,0 +1,25 @@
+/* Query 1: For each user, count his/her friends 
+   Run Time: 129321 ms */
+
+MATCH (u:User)-[r:KNOWS]->(f:User)
+RETURN u.user_id as user, count(r) as friends
+
+/* Query 2: For each user, count his/her friends of friends
+   Run Time: 2146644 ms */
+
+MATCH (u:User)-[r:KNOWS]->(f:User)-[r2:KNOWS]->(fs:User)
+RETURN u.user_id as user, f.user_id as friend, count(fs.user_id) as friends_of_friend
+
+/* Query 3: For each user, count his/her friends that are over 30
+   Run Time: 100858 ms */
+
+MATCH (u:User)-[r:KNOWS]->(f:User)
+WHERE f.age > 30
+RETURN u.user_id as user, count(r) as friends
+
+/* Query 4: For each male user, count how many male 
+	    and female friends he is having
+   Run Time: 78067 ms */
+
+MATCH (u:User {gender: 1})-[r:KNOWS]->(f:User)
+RETURN u.user_id as user, f.gender AS gender, count(f.gender) as friends

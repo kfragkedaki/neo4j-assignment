@@ -1,0 +1,20 @@
+/* Insert Relationships */
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///relationships.csv" AS row
+FIELDTERMINATOR '\t'
+MATCH (user1:User { user_id: row.node1 }),(user2:User { user_id: row.node2 })
+MERGE (user1)-[r:KNOWS]->(user2)
+
+/* Insert nodes */
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///profiles.csv" AS row
+FIELDTERMINATOR ','
+CREATE (u:User {user_id:row.user_id, gender: row.gender, age: row.age});
+
+/* Convert gender and age to Integers */
+
+MATCH (u:User)
+SET u.gender = toInteger(u.gender), u.age = toInteger(u.age)
+RETURN count(u)
